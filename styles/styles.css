@@ -1,205 +1,171 @@
-@font-face {
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/styles/fonts/montserrat.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF,
-    U+0131,
-    U+0152-0153,
-    U+02BB-02BC,
-    U+02C6,
-    U+02DA,
-    U+02DC,
-    U+0304,
-    U+0308,
-    U+0329,
-    U+2000-206F,
-    U+20AC,
-    U+2122,
-    U+2191,
-    U+2193,
-    U+2212,
-    U+2215,
-    U+FEFF,
-    U+FFFD;
-}
-
-@font-face {
-  font-family: Montserrat;
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/styles/fonts/montserrat-italic.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF,
-    U+0131,
-    U+0152-0153,
-    U+02BB-02BC,
-    U+02C6,
-    U+02DA,
-    U+02DC,
-    U+0304,
-    U+0308,
-    U+0329,
-    U+2000-206F,
-    U+20AC,
-    U+2122,
-    U+2191,
-    U+2193,
-    U+2212,
-    U+2215,
-    U+FEFF,
-    U+FFFD;
-}
+/* ============================================================
+   WITCHER TAVERN — Design System
+   Fonts: Playfair Display (headings) + Lora (body) via Google Fonts
+   Loaded in head.html
+   ============================================================ */
 
 :root {
-  /* grid */
+  /* ── Grid ─────────────────────────────────────────────── */
   --grid-container-width: 83.4%;
   --grid-column-width: calc(var(--grid-container-width) / 12);
   --grid-gutter-width: 8.3%;
 
-  /* spacing */
+  /* ── Spacing ──────────────────────────────────────────── */
+  --spacing-xs:  4px;
+  --spacing-s:   8px;
+  --spacing-m:   12px;
+  --spacing-l:   24px;
+  --spacing-xl:  32px;
   --spacing-xxl: 48px;
-  --spacing-xl: 32px;
-  --spacing-l: 24px;
-  --spacing-m: 12px;
-  --spacing-s: 8px;
-  --spacing-xs: 4px;
+  --spacing-3xl: 64px;
+  --spacing-4xl: 96px;
+  --spacing-5xl: 128px;
 
-  /* color schemes */
-  color-scheme: light dark;
+  /* ── Palette: Ink (dark browns) ───────────────────────── */
+  --color-ink-100: #e0c8a0;
+  --color-ink-200: #c4a070;
+  --color-ink-300: #a87e4a;
+  --color-ink-400: #8b6434;
+  --color-ink-500: #6b4c24;
+  --color-ink-600: #4a3418;
+  --color-ink-700: #2d1f0e;
+  --color-ink-800: #1a1108;
+  --color-ink-900: #0c0905;
 
-  /* color tokens */
-  --color-gray-100: #f1f1f1;
-  --color-gray-200: #d3d3d3;
-  --color-gray-300: #b5b5b5;
-  --color-gray-400: #999;
-  --color-gray-500: #7d7d7d;
-  --color-gray-600: #636363;
-  --color-gray-700: #494949;
-  --color-gray-800: #313131;
-  --color-gray-900: #1b1b1b;
-  --color-green-100: #e1f5e3;
-  --color-green-200: #a3e1a8;
-  --color-green-300: #60cb6a;
-  --color-green-400: #24b032;
-  --color-green-500: #1e9029;
-  --color-green-600: #187220;
-  --color-green-700: #115418;
-  --color-green-800: #0c3910;
-  --color-green-900: #072009;
-  --color-teal-100: #e4f3f5;
-  --color-teal-200: #acdbdf;
-  --color-teal-300: #71c1c9;
-  --color-teal-400: #36a7b3;
-  --color-teal-500: #108a96;
-  --color-teal-600: #0d6d77;
-  --color-teal-700: #0a5158;
-  --color-teal-800: #06363b;
-  --color-teal-900: #041e21;
-  --color-blue-100: #eaf2ff;
-  --color-blue-200: #b9d4ff;
-  --color-blue-300: #88b6ff;
-  --color-blue-400: #5898ff;
-  --color-blue-500: #2176ff;
-  --color-blue-600: #0058e4;
-  --color-blue-700: #0041a9;
-  --color-blue-800: #002c74;
-  --color-blue-900: #001942;
-  --color-purple-100: #f4edfb;
-  --color-purple-200: #dfcbf2;
-  --color-purple-300: #c9a7ea;
-  --color-purple-400: #b385e1;
-  --color-purple-500: #9d60d8;
-  --color-purple-600: #843ccb;
-  --color-purple-700: #622c98;
-  --color-purple-800: #421e66;
-  --color-purple-900: #251139;
-  --color-magenta-100: #ffebf9;
-  --color-magenta-200: #ffc0ec;
-  --color-magenta-300: #ff8fde;
-  --color-magenta-400: #ff53cc;
-  --color-magenta-500: #eb00a5;
-  --color-magenta-600: #bd0084;
-  --color-magenta-700: #8e0064;
-  --color-magenta-800: #630045;
-  --color-magenta-900: #3b002a;
-  --color-red-100: #ffecea;
-  --color-red-200: #ffc4be;
-  --color-red-300: #ff9990;
-  --color-red-400: #ff6759;
-  --color-red-500: #f81400;
-  --color-red-600: #c71000;
-  --color-red-700: #950c00;
-  --color-red-800: #670800;
-  --color-red-900: #3c0500;
-  --color-orange-100: #ffeddc;
-  --color-orange-200: #ffc895;
-  --color-orange-300: #ff9e43;
-  --color-orange-400: #f37500;
-  --color-orange-500: #c76000;
-  --color-orange-600: #9e4c00;
-  --color-orange-700: #753800;
-  --color-orange-800: #4f2600;
-  --color-orange-900: #2d1500;
-  --color-yellow-100: #fff48e;
-  --color-yellow-200: #ebd400;
-  --color-yellow-300: #cab600;
-  --color-yellow-400: #ab9a00;
-  --color-yellow-500: #8c7e00;
-  --color-yellow-600: #6e6400;
-  --color-yellow-700: #514a00;
-  --color-yellow-800: #373100;
-  --color-yellow-900: #1e1b00;
+  /* ── Palette: Gold (primary accent) ──────────────────── */
+  --color-gold-100: #faf0d0;
+  --color-gold-200: #f0d888;
+  --color-gold-300: #e4c060;
+  --color-gold-400: #d4a840;
+  --color-gold-500: #c89028;
+  --color-gold-600: #a87018;
+  --color-gold-700: #845410;
+  --color-gold-800: #5e3c08;
+  --color-gold-900: #3a2404;
 
-  /* named colors */
-  --color-light-base: 255 255 255;
-  --color-dark-base: 0 0 0;
-  --color-light: rgb(255 255 255);
-  --color-dark: rgb(0 0 0);
-  --color-text: light-dark(var(--color-dark), var(--color-light));
-  --color-link: light-dark(var(--color-gray-900), var(--color-gray-100));
-  --color-brand: var(--color-purple-500);
-  --color-accent: light-dark(var(--color-magenta-600), var(--color-magenta-500));
-  --color-background: light-dark(var(--color-light), var(--color-dark));
-  --color-shaded: light-dark(#f9f9f9, #111);
+  /* ── Palette: Parchment (light surfaces) ─────────────── */
+  --color-parchment-100: #fdf8f0;
+  --color-parchment-200: #f8f0e0;
+  --color-parchment-300: #f0e4cc;
+  --color-parchment-400: #e8d8b8;
+  --color-parchment-500: #dcc8a0;
+  --color-parchment-600: #c4a878;
+  --color-parchment-700: #a08858;
+  --color-parchment-800: #786040;
+  --color-parchment-900: #503e28;
 
-  /* fonts */
-  --font-family: montserrat, "Trebuchet MS", sans-serif;
+  /* ── Palette: Crimson (brand) ─────────────────────────── */
+  --color-crimson-100: #fce8e8;
+  --color-crimson-200: #f4bfbf;
+  --color-crimson-300: #e88888;
+  --color-crimson-400: #d45050;
+  --color-crimson-500: #b82020;
+  --color-crimson-600: #941818;
+  --color-crimson-700: #701010;
+  --color-crimson-800: #4c0808;
+  --color-crimson-900: #2c0404;
 
-  /* headings */
-  --heading-font-size-xxl: 32.44px;
-  --heading-font-size-xl: 28.83px;
-  --heading-font-size-l: 25.63px;
-  --heading-font-size-m: 22.78px;
-  --heading-font-size-s: 20.25px;
-  --heading-font-size-xs: 18px;
-  --heading-line-height: 1.15;
+  /* ── Palette: Forest (Witcher nature accent) ──────────── */
+  --color-forest-100: #d8ecc0;
+  --color-forest-200: #b0d890;
+  --color-forest-300: #84c060;
+  --color-forest-400: #5ca838;
+  --color-forest-500: #3c8820;
+  --color-forest-600: #2c6818;
+  --color-forest-700: #1e4c10;
+  --color-forest-800: #12300a;
+  --color-forest-900: #081804;
 
-  /* body */
+  /* ── Palette: Ash (neutral greys) ────────────────────── */
+  --color-ash-100: #e8e4dc;
+  --color-ash-200: #d0ccc0;
+  --color-ash-300: #b4b0a8;
+  --color-ash-400: #989490;
+  --color-ash-500: #7c7870;
+  --color-ash-600: #605c58;
+  --color-ash-700: #484440;
+  --color-ash-800: #302c28;
+  --color-ash-900: #1c1814;
+
+  /* ── Semantic: Backgrounds ────────────────────────────── */
+  --color-background:          var(--color-ink-900);
+  --color-background-elevated: var(--color-ink-800);
+  --color-background-overlay:  var(--color-ink-700);
+  --color-shaded:              var(--color-ink-800);
+
+  /* ── Semantic: Surfaces (parchment) ──────────────────── */
+  --color-surface:       var(--color-parchment-200);
+  --color-surface-raised: var(--color-parchment-100);
+  --color-surface-inset: var(--color-parchment-300);
+
+  /* ── Semantic: Text ───────────────────────────────────── */
+  --color-text:               var(--color-parchment-300);
+  --color-text-secondary:     var(--color-ink-200);
+  --color-text-muted:         var(--color-ink-300);
+  --color-text-on-surface:    var(--color-ink-800);
+  --color-text-on-surface-muted: var(--color-ink-600);
+  --color-text-accent:        var(--color-gold-400);
+  --color-link:               var(--color-gold-400);
+
+  /* ── Semantic: Accent & Brand ────────────────────────── */
+  --color-accent:       var(--color-gold-500);
+  --color-accent-hover: var(--color-gold-400);
+  --color-accent-subtle: var(--color-gold-900);
+  --color-brand:        var(--color-crimson-500);
+  --color-brand-hover:  var(--color-crimson-600);
+
+  /* ── Semantic: Borders ───────────────────────────────── */
+  --color-border:         var(--color-ink-600);
+  --color-border-accent:  var(--color-gold-700);
+  --color-border-subtle:  var(--color-ink-700);
+  --color-border-surface: var(--color-parchment-500);
+
+  /* ── Semantic: Utility aliases ───────────────────────── */
+  --color-light: #fff;
+  --color-dark:  #000;
+
+  /* ── Shadows ──────────────────────────────────────────── */
+  --shadow-card:       0 4px 32px rgba(12, 9, 5, 0.7);
+  --shadow-parchment:  0 2px 16px rgba(12, 9, 5, 0.35);
+  --shadow-glow-gold:  0 0 20px rgba(200, 144, 40, 0.3);
+  --shadow-glow-brand: 0 0 20px rgba(184, 32, 32, 0.3);
+
+  /* ── Border Radius ────────────────────────────────────── */
+  --radius-s:  2px;
+  --radius-m:  4px;
+  --radius-l:  8px;
+  --radius-xl: 16px;
+
+  /* ── Fonts ────────────────────────────────────────────── */
+  --font-heading: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body:    "Lora", Georgia, "Times New Roman", serif;
+  --font-family:  var(--font-body);
+
+  /* ── Heading sizes ────────────────────────────────────── */
+  --heading-font-size-xxl: 52px;
+  --heading-font-size-xl:  40px;
+  --heading-font-size-l:   32px;
+  --heading-font-size-m:   24px;
+  --heading-font-size-s:   20px;
+  --heading-font-size-xs:  16px;
+  --heading-line-height:   1.2;
+
+  /* ── Body sizes ───────────────────────────────────────── */
   --body-font-size-xxxl: 25px;
-  --body-font-size-xxl: 22px;
-  --body-font-size-xl: 20px;
-  --body-font-size-l: 18px;
-  --body-font-size-m: 16px;
-  --body-font-size-s: 14px;
-  --body-font-size-xs: 12px;
-  --body-line-height: 1.6;
+  --body-font-size-xxl:  22px;
+  --body-font-size-xl:   20px;
+  --body-font-size-l:    18px;
+  --body-font-size-m:    16px;
+  --body-font-size-s:    14px;
+  --body-font-size-xs:   12px;
+  --body-line-height:    1.7;
 
-  /* misc */
+  /* ── Misc layout ──────────────────────────────────────── */
   --header-height: 64px;
   --breadcrumb-height: 24px;
 }
 
-.light-scheme {
-  color-scheme: light;
-}
-
-.dark-scheme {
-  color-scheme: dark;
-}
+/* ── Base ─────────────────────────────────────────────────── */
 
 html {
   scroll-padding-top: calc(var(--header-height) + 1rem);
@@ -209,7 +175,7 @@ body {
   margin: 0;
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: var(--font-family);
+  font-family: var(--font-body);
   font-size: var(--body-font-size-m);
   line-height: var(--body-line-height);
   padding: var(--header-height) 0 0;
@@ -220,7 +186,6 @@ body {
 
   &.no-header {
     --header-height: 0;
-
     margin: 0;
   }
 }
@@ -233,15 +198,25 @@ header {
 
 a {
   color: var(--color-link);
+  text-decoration-color: var(--color-border-accent);
+  transition: color 0.2s ease;
 
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+
+  /* ── Buttons ────────────────────────────────────────────── */
   &.btn {
     display: inline-block;
     line-height: 1;
-    font-weight: 500;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-decoration: none;
-    border: 2px solid;
-    padding: 8px 12px;
+    border: 1px solid;
+    padding: 10px 20px;
     box-sizing: border-box;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 
     &.btn-outline {
       background: transparent;
@@ -249,18 +224,31 @@ a {
   }
 
   &.btn-accent {
-    color: #fff;
+    color: var(--color-ink-900);
     background: var(--color-accent);
-    border: 2px solid var(--color-accent);
+    border-color: var(--color-accent);
+
+    &:hover {
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      box-shadow: var(--shadow-glow-gold);
+    }
 
     &.btn-outline {
       color: var(--color-accent);
+      background: transparent;
+
+      &:hover {
+        color: var(--color-ink-900);
+        background: var(--color-accent);
+      }
     }
   }
 
   &.btn-primary {
-    color: var(--color-background);
-    background-color: var(--color-text);
+    color: var(--color-surface);
+    background: var(--color-text);
+    border-color: var(--color-text);
 
     &.btn-outline {
       color: var(--color-text);
@@ -269,27 +257,35 @@ a {
   }
 
   &.btn-secondary {
-    color: var(--color-background);
-    background-color: var(--color-gray-500);
-    border: 2px solid var(--color-gray-500);
+    color: var(--color-surface);
+    background: var(--color-ash-500);
+    border-color: var(--color-ash-500);
 
     &.btn-outline {
-      color: var(--color-gray-500);
+      color: var(--color-ash-300);
+      background: transparent;
+      border-color: var(--color-ash-500);
     }
   }
 
   &.btn-negative {
-    color: #fff;
-    background-color: var(--color-red-600);
-    border: 2px solid var(--color-red-600);
+    color: var(--color-light);
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+
+    &:hover {
+      background: var(--color-brand-hover);
+      box-shadow: var(--shadow-glow-brand);
+    }
 
     &.btn-outline {
-      color: var(--color-red-600);
+      color: var(--color-brand);
+      background: transparent;
     }
   }
 }
 
-/* sections */
+/* ── Sections ──────────────────────────────────────────────── */
 .section {
   display: block;
 
@@ -304,7 +300,6 @@ main {
   ol {
     padding-inline-start: 24px;
 
-    /* Reduce nested lists even further */
     ul,
     ol {
       padding-inline-start: 12px;
@@ -317,30 +312,49 @@ button {
 }
 
 li {
-  margin-block: 1em;
+  margin-block: 0.6em;
 }
 
+/* ── Headings ──────────────────────────────────────────────── */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-weight: 700;
   line-height: var(--heading-line-height);
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
 h1 { font-size: var(--heading-font-size-xxl); }
-h2 { font-size: var(--heading-font-size-xl); }
-h3 { font-size: var(--heading-font-size-l); }
-h4 { font-size: var(--heading-font-size-m); }
-h5 { font-size: var(--heading-font-size-s); }
-h6 { font-size: var(--heading-font-size-xs); }
+h2 { font-size: var(--heading-font-size-xl);  }
+h3 { font-size: var(--heading-font-size-l);   }
+h4 { font-size: var(--heading-font-size-m);   }
+h5 { font-size: var(--heading-font-size-s);   }
+h6 { font-size: var(--heading-font-size-xs);  }
 
 strong {
   font-weight: 600;
 }
 
+em {
+  font-style: italic;
+  color: var(--color-text-accent);
+}
+
+/* ── Decorative divider (used between recipe sections) ─────── */
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border-accent);
+  margin: var(--spacing-xl) auto;
+  opacity: 0.4;
+  width: 60%;
+}
+
+/* ── Forms ─────────────────────────────────────────────────── */
 input,
 textarea,
 select,
@@ -348,6 +362,7 @@ button {
   font: inherit;
 }
 
+/* ── Media ─────────────────────────────────────────────────── */
 img {
   width: 100%;
   height: auto;
@@ -358,18 +373,14 @@ svg {
   height: 20px;
 }
 
-/* @media (width >= 600px) {} */
-
-/* @media (width >= 900px) {} */
-
-/* @media (width >= 1200px) {} */
-
+/* ── Responsive grid ───────────────────────────────────────── */
 @media (width >= 1440px) {
   :root {
     --grid-container-width: 1200px;
   }
 }
 
+/* ── AEM skeleton / loading states ────────────────────────── */
 main > div,
 .has-template,
 div[data-status] {
