@@ -73,6 +73,10 @@ CSS custom properties are defined in `styles/styles.css`:
 - **Typography**: Montserrat variable font (100–900 weight)
 - **Color schemes**: `light-dark()` CSS function; stored in localStorage
 
+### CSS Conventions
+
+- **Mobile-first**: Write base styles for mobile, then enhance with `@media (width >= 600px)` (tablet) and `@media (width >= 900px)` (desktop). Never use `max-width` queries.
+
 ### Testing
 
 Tests use Web Test Runner + Chai + Sinon. Test files live in `test/` and mirror the `scripts/` and `blocks/` structure.

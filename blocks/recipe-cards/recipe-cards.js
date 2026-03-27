@@ -53,7 +53,7 @@ function buildFilter(categories, grid) {
     btn.addEventListener('click', () => {
       bar.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      const filter = btn.dataset.filter;
+      const { filter } = btn.dataset;
       grid.querySelectorAll('.recipe-card').forEach((card) => {
         // eslint-disable-next-line no-param-reassign
         card.hidden = filter !== 'all' && card.dataset.category !== filter;
@@ -66,10 +66,14 @@ function buildFilter(categories, grid) {
   return bar;
 }
 
+const UNIVERSE_SLUGS = {
+  відьмак: 'witcher',
+  'гра престолів': 'game-of-thrones',
+};
+
 function universeSlug(universe) {
-  return universe.toLowerCase().trim()
-    .replace(/\s+/g, '-')
-    .replace(/[''`]/g, '');
+  const key = universe.toLowerCase().trim();
+  return UNIVERSE_SLUGS[key] ?? key.replace(/\s+/g, '-').replace(/[''`]/g, '');
 }
 
 function buildCard(recipe) {
@@ -90,7 +94,7 @@ function buildCard(recipe) {
 
   if (recipe.universe) {
     const badge = document.createElement('span');
-    badge.className = `recipe-card-badge recipe-card-badge--${universeSlug(recipe.universe)}`;
+    badge.className = `recipe-card-badge recipe-card-badge-${universeSlug(recipe.universe)}`;
     badge.textContent = recipe.universe;
     imgWrap.append(badge);
   }
@@ -132,9 +136,9 @@ function buildCard(recipe) {
   return card;
 }
 
-export default async function init(el) {
-  const isFeatured = el.classList.contains('featured');
-  const rows = [...el.querySelectorAll(':scope > div')];
+export default function decorate(block) {
+  const isFeatured = block.classList.contains('featured');
+  const rows = [...block.querySelectorAll(':scope > div')];
 
   const recipes = rows.map(parseRecipe).filter(Boolean);
   if (!recipes.length) return;
@@ -143,14 +147,12 @@ export default async function init(el) {
   grid.className = 'recipe-cards-grid';
   recipes.forEach((recipe) => grid.append(buildCard(recipe)));
 
-  el.innerHTML = '';
-
+  const children = [];
   if (!isFeatured) {
     const categories = [...new Set(recipes.map((r) => r.category).filter(Boolean))];
-    if (categories.length > 1) {
-      el.append(buildFilter(categories, grid));
-    }
+    if (categories.length > 1) children.push(buildFilter(categories, grid));
   }
+  children.push(grid);
 
-  el.append(grid);
+  block.replaceChildren(...children);
 }

@@ -5,12 +5,6 @@ const hostnames = ['authorkit.dev'];
 const locales = {
   '': { lang: 'uk' },
   '/en': { lang: 'en' },
-  '/de': { lang: 'de' },
-  '/es': { lang: 'es' },
-  '/fr': { lang: 'fr' },
-  '/hi': { lang: 'hi' },
-  '/ja': { lang: 'ja' },
-  '/zh': { lang: 'zh' },
 };
 
 const linkBlocks = [

@@ -1,0 +1,13 @@
+<svg id="difficulty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <!-- Sword pointing upward -->
+  <!-- Blade -->
+  <polygon points="10,1.5 8.5,13 11.5,13" fill="#c4a070"/>
+  <!-- Blade fuller (ridge line) -->
+  <line x1="10" y1="4" x2="10" y2="12" stroke="#1a1108" stroke-width="0.5" opacity="0.5"/>
+  <!-- Crossguard -->
+  <rect x="6" y="13" width="8" height="1.5" rx="0.75" fill="#c4a070"/>
+  <!-- Grip -->
+  <rect x="9.25" y="14.5" width="1.5" height="3.5" rx="0.75" fill="#c4a070"/>
+  <!-- Pommel -->
+  <circle cx="10" cy="18.5" r="1.5" fill="#c4a070"/>
+</svg>

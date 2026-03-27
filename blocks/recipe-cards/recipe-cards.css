@@ -119,8 +119,8 @@
   /* Decorative placeholder shown when no image is present */
   background-color: var(--color-ink-700);
   background-image:
-    radial-gradient(ellipse at 30% 40%, rgba(200, 144, 40, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 70%, rgba(184, 32, 32, 0.06) 0%, transparent 60%);
+    radial-gradient(ellipse at 30% 40%, rgb(200 144 40 / 8%) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 70%, rgb(184 32 32 / 6%) 0%, transparent 60%);
 
   picture {
     display: block;
@@ -141,7 +141,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, transparent 50%, rgba(12, 9, 5, 0.5) 100%);
+    background: linear-gradient(to bottom, transparent 50%, rgb(12 9 5 / 50%) 100%);
     pointer-events: none;
   }
 }
@@ -162,15 +162,15 @@
   border-radius: var(--radius-s);
   white-space: nowrap;
 
-  &.recipe-card-badge--відьмак {
-    background: rgba(108, 16, 16, 0.88);
+  &.recipe-card-badge-witcher {
+    background: rgb(108 16 16 / 88%);
     color: var(--color-crimson-100);
     border: 1px solid var(--color-crimson-600);
   }
 
   /* Game of Thrones — dark blue/steel */
-  &.recipe-card-badge--гра-престолів {
-    background: rgba(18, 22, 48, 0.88);
+  &.recipe-card-badge-game-of-thrones {
+    background: rgb(18 22 48 / 88%);
     color: #a8c0e8;
     border: 1px solid #2a3464;
   }

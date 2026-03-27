@@ -1,0 +1,158 @@
+.recipe-steps {
+  margin-block: var(--spacing-xxl);
+}
+
+/* ── Section heading (default content above block) ────── */
+
+.recipe-steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxl);
+}
+
+/* ── Individual step ───────────────────────────────────── */
+
+.recipe-step {
+  counter-increment: step;
+  display: grid;
+  gap: var(--spacing-l);
+  align-items: start;
+
+  @media (width >= 600px) {
+    &:not(.step-no-image) {
+      grid-template-columns: 1fr 1fr;
+
+      .step-content {
+        margin-block: auto;
+      }
+    }
+  }
+
+  @media (width >= 900px) {
+    &:not(.step-no-image) {
+      grid-template-columns: 1fr 480px;
+    }
+
+    /* Alternate image left/right for visual rhythm */
+    &:nth-child(even):not(.step-no-image) {
+      grid-template-columns: 428px 1fr;
+
+      .step-content {
+        order: 2;
+      }
+
+      .step-image {
+        order: 1;
+      }
+    }
+  }
+
+  /* Divider between steps (except the last) */
+  & + .recipe-step {
+    padding-top: var(--spacing-xxl);
+    border-top: 1px solid var(--color-border);
+    position: relative;
+
+    /* Diamond ornament on the divider — matching the logo motif */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-accent);
+      opacity: 0.6;
+    }
+  }
+}
+
+/* ── Step content ──────────────────────────────────────── */
+.step-content {
+  position: relative;
+  padding-left: calc(var(--spacing-xxl) + var(--spacing-m));
+  color: var(--color-text);
+
+  /* Large decorative step number */
+  &::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -4px;
+    font-family: var(--font-heading);
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-accent);
+    opacity: 0.25;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  h2, h3, h4 {
+    color: var(--color-text-accent);
+    margin-top: 0;
+    font-size: var(--heading-font-size-xs);
+    margin-bottom: var(--spacing-m);
+  }
+
+  p {
+    color: var(--color-text);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-m);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul, ol {
+    color: var(--color-text);
+    padding-left: var(--spacing-l);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-m);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Tip / note callout — any <em> paragraph becomes a tip box */
+  p:has(> em:only-child) {
+    background-color: var(--color-ink-800);
+    border-left: 2px solid var(--color-accent);
+    border-radius: var(--radius-s);
+    padding: var(--spacing-m) var(--spacing-l);
+    font-size: var(--body-font-size-s);
+    color: var(--color-text-secondary);
+  }
+}
+
+/* ── Step photo ────────────────────────────────────────── */
+
+.step-image {
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+
+  picture {
+    display: block;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.03);
+  }
+}

@@ -1,0 +1,280 @@
+/* ═══════════════════════════════════════════════════════════
+   Recipe Listing Hero Block
+   Atmospheric full-bleed banner for the recipes index page.
+   ═══════════════════════════════════════════════════════════ */
+
+.recipe-listing-hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+/* ── Background ─────────────────────────────────────────── */
+
+.rlh-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 60%, rgb(132 84 16 / 18%) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 80% at 70% 30%, rgb(184 32 32 / 8%) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 50% at 50% 100%, rgb(12 9 5 / 95%) 0%, transparent 50%),
+    linear-gradient(180deg, var(--color-ink-900) 0%, var(--color-ink-700) 40%, var(--color-ink-800) 70%, var(--color-ink-900) 100%);
+}
+
+/* ── Candlelight glow orbs ──────────────────────────────── */
+
+.rlh-glows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rlh-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: rlh-flicker 4s ease-in-out infinite alternate;
+}
+
+.rlh-glow-1 {
+  width: 400px;
+  height: 400px;
+  top: 10%;
+  left: 5%;
+  background: radial-gradient(circle, rgb(200 144 40 / 12%) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.rlh-glow-2 {
+  width: 300px;
+  height: 300px;
+  top: 30%;
+  right: 15%;
+  background: radial-gradient(circle, rgb(184 32 32 / 8%) 0%, transparent 70%);
+  animation-delay: 1.5s;
+  animation-duration: 5s;
+}
+
+.rlh-glow-3 {
+  width: 250px;
+  height: 250px;
+  bottom: 0;
+  left: 50%;
+  background: radial-gradient(circle, rgb(200 144 40 / 10%) 0%, transparent 70%);
+  animation-delay: 0.8s;
+  animation-duration: 3.5s;
+}
+
+@keyframes rlh-flicker {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  70% {
+    opacity: 0.85;
+    transform: scale(0.97);
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+/* ── Ember particles ────────────────────────────────────── */
+
+.rlh-embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.rlh-ember {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: var(--color-gold-400);
+  box-shadow: 0 0 6px 2px rgb(212 168 64 / 60%);
+  animation: rlh-rise linear infinite;
+  opacity: 0;
+}
+
+@keyframes rlh-rise {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translateY(-200px) translateX(var(--drift, 20px)) scale(0.8);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translateY(-420px) translateX(var(--drift2, -10px)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ── Content ────────────────────────────────────────────── */
+
+.rlh-content {
+  position: relative;
+  z-index: 2;
+  width: var(--grid-container-width);
+  margin: 0 auto;
+  padding: var(--spacing-4xl) 0 var(--spacing-4xl);
+  box-sizing: border-box;
+}
+
+/* ── Eyebrow ────────────────────────────────────────────── */
+
+.rlh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 var(--spacing-l);
+  opacity: 0;
+  animation: rlh-fade-up 0.7s ease 0.2s forwards;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--color-accent);
+    opacity: 0.6;
+  }
+}
+
+/* ── Title ──────────────────────────────────────────────── */
+
+.rlh-title {
+  font-family: var(--font-heading);
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-parchment-200);
+  margin: 0 0 var(--spacing-l);
+  opacity: 0;
+  animation: rlh-fade-up 0.8s ease 0.35s forwards;
+
+  em {
+    font-style: italic;
+    color: var(--color-gold-400);
+    display: block;
+  }
+}
+
+/* ── Subtitle ───────────────────────────────────────────── */
+
+.rlh-subtitle {
+  max-width: 500px;
+  font-size: var(--body-font-size-l);
+  line-height: 1.8;
+  color: var(--color-ink-200);
+  font-style: italic;
+  margin: 0;
+  opacity: 0;
+  animation: rlh-fade-up 0.8s ease 0.5s forwards;
+}
+
+/* ── Stats row ──────────────────────────────────────────── */
+
+.rlh-stats {
+  display: flex;
+  gap: var(--spacing-xxl);
+  margin-top: var(--spacing-3xl);
+  opacity: 0;
+  animation: rlh-fade-up 0.8s ease 0.65s forwards;
+}
+
+.rlh-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rlh-stat-num {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-gold-400);
+  line-height: 1;
+}
+
+.rlh-stat-label {
+  font-size: var(--body-font-size-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-300);
+}
+
+/* ── Bottom ornament line ───────────────────────────────── */
+
+.rlh-ornament {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-gold-700) 20%,
+    var(--color-gold-500) 50%,
+    var(--color-gold-700) 80%,
+    transparent
+  );
+  opacity: 0.5;
+}
+
+/* ── Shared animation ───────────────────────────────────── */
+
+@keyframes rlh-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (width >= 900px) {
+  .recipe-listing-hero {
+    min-height: 620px;
+  }
+}
+
+@media (width >= 1440px) {
+  .rlh-content {
+    width: 1200px;
+  }
+}

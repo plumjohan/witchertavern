@@ -125,10 +125,10 @@
   --color-dark:  #000;
 
   /* ── Shadows ──────────────────────────────────────────── */
-  --shadow-card:       0 4px 32px rgba(12, 9, 5, 0.7);
-  --shadow-parchment:  0 2px 16px rgba(12, 9, 5, 0.35);
-  --shadow-glow-gold:  0 0 20px rgba(200, 144, 40, 0.3);
-  --shadow-glow-brand: 0 0 20px rgba(184, 32, 32, 0.3);
+  --shadow-card:       0 4px 32px rgb(12 9 5 / 70%);
+  --shadow-parchment:  0 2px 16px rgb(12 9 5 / 35%);
+  --shadow-glow-gold:  0 0 20px rgb(200 144 40 / 30%);
+  --shadow-glow-brand: 0 0 20px rgb(184 32 32 / 30%);
 
   /* ── Border Radius ────────────────────────────────────── */
   --radius-s:  2px;
@@ -137,8 +137,8 @@
   --radius-xl: 16px;
 
   /* ── Fonts ────────────────────────────────────────────── */
-  --font-heading: "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-body:    "Lora", Georgia, "Times New Roman", serif;
+  --font-heading: "Playfair Display", georgia, "Times New Roman", serif;
+  --font-body:    "Lora", georgia, "Times New Roman", serif;
   --font-family:  var(--font-body);
 
   /* ── Heading sizes ────────────────────────────────────── */
@@ -186,6 +186,7 @@ body {
 
   &.no-header {
     --header-height: 0;
+
     margin: 0;
   }
 }
@@ -292,6 +293,11 @@ a {
   > .default-content {
     max-width: var(--grid-container-width);
     margin: 0 auto;
+  }
+
+  &.narrow > div {
+    max-width: var(--grid-container-width);
+    margin-inline: auto;
   }
 }
 

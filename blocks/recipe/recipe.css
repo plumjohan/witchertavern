@@ -1,0 +1,192 @@
+.recipe {
+  margin-block: var(--spacing-xxl);
+}
+
+/* ── Title ────────────────────────────────────────────── */
+
+.recipe-header {
+  margin-bottom: var(--spacing-xl);
+
+  h1, h2 {
+    margin: 0;
+    color: var(--color-text);
+    position: relative;
+    padding-bottom: var(--spacing-m);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 56px;
+      height: 2px;
+      background-color: var(--color-accent);
+    }
+  }
+}
+
+/* ── Intro: description + dish photo ─────────────────── */
+
+.recipe-intro {
+  display: grid;
+  gap: var(--spacing-l);
+
+  @media (width >= 900px) {
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+  }
+
+  @media (width >= 1200px) {
+    grid-template-columns: 1fr 460px;
+  }
+}
+
+.recipe-intro-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-l);
+}
+
+.recipe-description {
+  position: relative;
+  color: var(--color-text);
+  background-color: var(--color-ink-800);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-m);
+  padding: var(--spacing-xxl) var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) + 4px);
+  margin: 0;
+  box-shadow: var(--shadow-parchment);
+
+  /* Opening quote mark */
+  &::before {
+    content: '\201C';
+    position: absolute;
+    top: 0;
+    left: var(--spacing-l);
+    font-family: var(--font-heading);
+    font-size: 72px;
+    line-height: 1;
+    color: var(--color-accent);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  p {
+    color: var(--color-text);
+    font-style: italic;
+    font-size: var(--body-font-size-l);
+    line-height: 1.85;
+    margin: 0 0 var(--spacing-m);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.recipe-image {
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+
+  picture {
+    display: block;
+    width: 100%;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}
+
+/* ── Stats bar ────────────────────────────────────────── */
+
+.recipe-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 0;
+  background-color: var(--color-border-accent);
+  border: 1px solid var(--color-border-accent);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+
+.recipe-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-s);
+  padding: var(--spacing-m) var(--spacing-m);
+  padding-bottom: var(--spacing-xxs);
+  background-color: var(--color-ink-800);
+  color: var(--color-text-accent);
+  text-align: center;
+
+  /* Icon via CSS mask */
+  &::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-accent);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    flex-shrink: 0;
+  }
+
+  &[data-type='time']::before {
+    mask-image: url('/img/icons/clock.svg');
+  }
+
+  &[data-type='servings']::before {
+    mask-image: url('/img/icons/servings.svg');
+  }
+
+  &[data-type='difficulty']::before {
+    display: none;
+  }
+}
+
+.recipe-stat-label {
+  order: -1;
+  width: 100%;
+  padding-bottom: var(--spacing-s);
+  border-bottom: 1px solid var(--color-border-accent);
+  font-family: var(--font-heading);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.recipe-stat-icons {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.recipe-stat-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background-color: var(--color-accent);
+  mask-image: url('/img/icons/difficulty.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  p {
+    margin: 0;
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--body-font-size-m);
+    font-weight: 600;
+  }
+}
