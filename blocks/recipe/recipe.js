@@ -18,6 +18,9 @@
 
 import { getMetadata } from '../../scripts/ak.js';
 import getPlaceholders from '../../scripts/utils/placeholders.js';
+import { createPicture } from '../../scripts/utils/picture.js';
+
+const INTRO_BREAK = [{ media: '(min-width: 600px)', width: '600' }, { width: '750' }];
 
 const STATS = [
   { key: 'cook-time', type: 'time' },
@@ -114,7 +117,14 @@ function buildIntro(row, ph) {
 
   // Right column: dish photo
   if (imgCell) {
-    const picture = imgCell.querySelector('picture');
+    const rawPicture = imgCell.querySelector('picture');
+    const rawImg = rawPicture?.querySelector('img');
+    const picture = createPicture({
+      src: rawImg?.src ?? rawImg?.getAttribute('src') ?? '',
+      alt: rawImg?.alt ?? '',
+      eager: true,
+      breakpoints: INTRO_BREAK,
+    });
     const wrapper = document.createElement('div');
     wrapper.className = 'recipe-image';
     wrapper.append(picture);

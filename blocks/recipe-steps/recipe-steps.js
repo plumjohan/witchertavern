@@ -11,6 +11,10 @@
  * Steps are numbered automatically starting from 1.
  */
 
+import { createPicture } from '../../scripts/utils/picture.js';
+
+const STEP_BREAK = [{ media: '(min-width: 600px)', width: '600' }, { width: '750' }];
+
 export default function decorate(block) {
   const rows = [...block.children];
   const list = document.createElement('ol');
@@ -26,8 +30,14 @@ export default function decorate(block) {
     content.append(...(cells[0]?.childNodes ?? []));
     step.append(content);
 
-    const picture = cells[1]?.querySelector('picture');
-    if (picture) {
+    const rawPicture = cells[1]?.querySelector('picture');
+    if (rawPicture) {
+      const rawImg = rawPicture.querySelector('img');
+      const picture = createPicture({
+        src: rawImg?.src ?? rawImg?.getAttribute('src') ?? '',
+        alt: rawImg?.alt ?? '',
+        breakpoints: STEP_BREAK,
+      });
       const imgWrapper = document.createElement('div');
       imgWrapper.className = 'step-image';
       imgWrapper.append(picture);
