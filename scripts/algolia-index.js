@@ -7,7 +7,7 @@
  * Environment variables (set by the GitHub Action):
  *   ALGOLIA_APP_ID    — Algolia application ID
  *   ALGOLIA_ADMIN_KEY — Algolia admin API key (kept in GitHub secrets)
- *   PAGE_PATH         — e.g. /recipies/crown-of-pork-ribs
+ *   PAGE_PATH         — e.g. /recipies/crown-of-pork-ribs.md (DA.live includes .md)
  *   EVENT_TYPE        — resource-published | resource-unpublished
  *   GITHUB_REF_NAME   — branch name, used to pick dev vs prod index
  */
@@ -28,38 +28,77 @@ const INDEX_NAME = IS_PROD
   : 'witchertavern_recipes_dev';
 
 const AEM_ORIGIN = 'https://main--witchertavern--mathlov3.aem.live';
-const QUERY_INDEX_URL = `${AEM_ORIGIN}/recipies/query-index.json`;
 
-async function getRecord(path) {
-  const res = await fetch(QUERY_INDEX_URL);
-  if (!res.ok) throw new Error(`Failed to fetch query-index: ${res.status}`);
-  const { data } = await res.json();
-  return data.find((r) => r.path === path) ?? null;
+const META_FIELDS = [
+  'title',
+  'description',
+  'category',
+  'world',
+  'difficulty',
+  'cook-time',
+  'servings',
+  'template',
+];
+
+/** DA.live sends paths with .md extension — strip it for the live URL */
+function normalizePath(path) {
+  return path.replace(/\.md$/, '');
+}
+
+/**
+ * Extract a meta tag value from raw HTML.
+ * Handles both attribute orders: name/property before or after content.
+ */
+function extractMeta(html, key) {
+  const a = new RegExp(`<meta[^>]+(?:name|property)=["']${key}["'][^>]+content=["']([^"']+)["']`, 'i');
+  const b = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']${key}["']`, 'i');
+  return (html.match(a) || html.match(b))?.[1] ?? null;
+}
+
+async function fetchRecord(path) {
+  const url = `${AEM_ORIGIN}${path}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  const html = await res.text();
+
+  const record = { path };
+
+  META_FIELDS.forEach((field) => {
+    const value = extractMeta(html, field);
+    if (value) record[field] = value;
+  });
+
+  const ogImage = extractMeta(html, 'og:image');
+  if (ogImage) {
+    try { record.image = new URL(ogImage).pathname; } catch { record.image = ogImage; }
+  }
+
+  return record;
 }
 
 async function run() {
   if (!PAGE_PATH) throw new Error('PAGE_PATH env var is missing');
 
+  const path = normalizePath(PAGE_PATH);
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
   const index = client.initIndex(INDEX_NAME);
 
-  // Remove from index when unpublished
   if (EVENT_TYPE === 'resource-unpublished') {
-    await index.deleteObject(PAGE_PATH);
-    console.log(`Deleted: ${PAGE_PATH} from ${INDEX_NAME}`);
+    await index.deleteObject(path);
+    console.log(`Deleted: ${path} from ${INDEX_NAME}`);
     return;
   }
 
-  // Fetch the record from AEM query index
-  const record = await getRecord(PAGE_PATH);
-  if (!record) {
-    console.warn(`Not found in query-index: ${PAGE_PATH} — skipping`);
+  const record = await fetchRecord(path);
+
+  if (record.template !== 'recipie') {
+    console.log(`Skipping non-recipe page: ${path} (template: ${record.template ?? 'none'})`);
     return;
   }
 
-  // objectID is the page path — stable, unique, human-readable
-  await index.saveObject({ ...record, objectID: record.path });
-  console.log(`Indexed: ${PAGE_PATH} → ${INDEX_NAME}`);
+  await index.saveObject({ ...record, objectID: path });
+  console.log(`Indexed: ${path} → ${INDEX_NAME}`);
+  console.log(record);
 }
 
 run().catch((err) => {
