@@ -5,7 +5,7 @@ indices:
     target: /recipies/query-index.json
     properties:
       title:
-        select: head > meta[name="title"]
+        select: head > title
         value: |
           attribute(el, "content")
       description:
