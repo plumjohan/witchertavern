@@ -34,17 +34,18 @@ export default function decorate(block) {
     content.append(...(cells[0]?.childNodes ?? []));
     step.append(content);
 
-    const rawPicture = cells[1]?.querySelector('picture');
-    if (rawPicture) {
-      const rawImg = rawPicture.querySelector('img');
-      const picture = createPicture({
-        src: rawImg?.src ?? rawImg?.getAttribute('src') ?? '',
-        alt: rawImg?.alt ?? '',
-        breakpoints: STEP_BREAK,
-      });
+    const rawPictures = [...(cells[1]?.querySelectorAll('picture') ?? [])];
+    if (rawPictures.length) {
       const imgWrapper = document.createElement('div');
       imgWrapper.className = 'step-image';
-      imgWrapper.append(picture);
+      rawPictures.forEach((rawPicture) => {
+        const rawImg = rawPicture.querySelector('img');
+        imgWrapper.append(createPicture({
+          src: rawImg?.src ?? rawImg?.getAttribute('src') ?? '',
+          alt: rawImg?.alt ?? '',
+          breakpoints: STEP_BREAK,
+        }));
+      });
       step.append(imgWrapper);
     } else {
       step.classList.add('step-no-image');

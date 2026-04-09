@@ -2,6 +2,7 @@ indices:
   recipes:
     include:
       - /recipes/**
+      - /recipes/**/**
     target: /recipes/query-index.json
     properties:
       title:

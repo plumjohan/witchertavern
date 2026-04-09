@@ -13,8 +13,12 @@
  *
  * Block variants (add as extra class on the block div):
  *   featured     — curated grid, no category filter
- *   query-index  — first content row is a /path/to/query-index.json URL;
- *                  cards are auto-populated from published recipes
+ *   query-index  — auto-populated from a query-index.json endpoint
+ *                  Row 1 (required): /path/to/query-index.json URL
+ *                  Row 2 (optional): max number of cards to show (e.g. 4)
+ *                  Row 3 (optional): world slug to filter by (e.g. witcher, game-of-thrones)
+ *   random           — (combine with query-index) shuffle results before applying the limit
+ *   category-{slug}  — (combine with query-index) filter by category slug (e.g. category-maindishes)
  */
 
 import { createPicture } from '../../scripts/utils/picture.js';
@@ -30,6 +34,7 @@ function universeSlug(universe) {
   const key = universe.toLowerCase().trim();
   return UNIVERSE_SLUGS[key] ?? key.replace(/\s+/g, '-').replace(/[''`]/g, '');
 }
+
 
 // ── Card builder ──────────────────────────────────────────────────────────────
 
@@ -177,6 +182,17 @@ function buildFilter(categories, grid) {
   return bar;
 }
 
+// ── Shuffle (Fisher-Yates) ────────────────────────────────────────────────────
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // ── Grid + empty state ────────────────────────────────────────────────────────
 
 function buildGrid(recipes) {
@@ -204,8 +220,14 @@ export default async function decorate(block) {
 
   // ── Query-index variant ───────────────────────────────────
   if (isQueryIndex) {
-    const urlCell = block.querySelector(':scope > div > div');
-    const url = urlCell?.textContent?.trim() || '/query-index.json';
+    const rows = [...block.querySelectorAll(':scope > div > div')];
+    const url = rows[0]?.textContent?.trim() || '/query-index.json';
+    const limit = parseInt(rows[1]?.textContent?.trim(), 10) || 0;
+    const worldFilter = rows[2]?.textContent?.trim().toLowerCase() || '';
+    const categoryFilter = [...block.classList]
+      .find((c) => c.startsWith('category-'))
+      ?.slice('category-'.length) || '';
+    const isRandom = block.classList.contains('random');
     block.replaceChildren();
 
     let recipes = [];
@@ -216,10 +238,20 @@ export default async function decorate(block) {
       console.error('[recipe-cards]', err);
     }
 
+    if (worldFilter) {
+      recipes = recipes.filter((r) => universeSlug(r.universe) === worldFilter
+        || r.universe.toLowerCase() === worldFilter);
+    }
+    if (categoryFilter) {
+      recipes = recipes.filter((r) => r.category.toLowerCase().replace(/\s+/g, '-') === categoryFilter);
+    }
+    if (isRandom) recipes = shuffle(recipes);
+    if (limit > 0) recipes = recipes.slice(0, limit);
+
     const grid = buildGrid(recipes);
     const categories = [...new Set(recipes.map((r) => r.category).filter(Boolean))];
     const children = [];
-    if (categories.length > 1) children.push(buildFilter(categories, grid));
+    if (!worldFilter && !categoryFilter && !limit && categories.length > 1) children.push(buildFilter(categories, grid));
     children.push(grid);
     block.replaceChildren(...children);
     return;

@@ -2,7 +2,12 @@ import { getConfig, getMetadata } from '../../scripts/ak.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { setColorScheme } from '../section-metadata/section-metadata.js';
 import { i18n } from '../../scripts/utils/placeholders.js';
-import { getSearchQuery, navigateToSearch, SEARCH_QUERY_EVENT } from '../../scripts/utils/search.js';
+import {
+  getSearchQuery,
+  navigateToSearch,
+  createAlgoliaSuggestProvider,
+  createQueryIndexSuggestProvider,
+} from '../../scripts/utils/search.js';
 
 const { locale } = getConfig();
 
@@ -14,53 +19,9 @@ const HEADER_ACTIONS = [
 ];
 
 const MIN_QUERY_LEN = 3;
-const MAX_SUGGESTIONS = 6;
 const DEBOUNCE_MS = 300;
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`;
 
-// ── Search providers ───────────────────────────────────────────────────────────
-
-function createAlgoliaProvider(appId, searchKey, indexName) {
-  return async (query) => {
-    try {
-      const res = await fetch(
-        `https://${appId}-dsn.algolia.net/1/indexes/${indexName}/query`,
-        {
-          method: 'POST',
-          headers: {
-            'X-Algolia-Application-Id': appId,
-            'X-Algolia-API-Key': searchKey,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query,
-            hitsPerPage: MAX_SUGGESTIONS,
-            attributesToRetrieve: ['path', 'title', 'category', 'image'],
-          }),
-        },
-      );
-      if (!res.ok) return [];
-      return (await res.json()).hits ?? [];
-    } catch { return []; }
-  };
-}
-
-let queryIndexCache = null;
-
-function createQueryIndexProvider(url) {
-  return async (query) => {
-    if (!queryIndexCache) {
-      try {
-        const resp = await fetch(url);
-        queryIndexCache = resp.ok ? ((await resp.json()).data ?? []) : [];
-      } catch { queryIndexCache = []; }
-    }
-    const q = query.toLowerCase();
-    return queryIndexCache
-      .filter((item) => item.title?.toLowerCase().includes(q))
-      .slice(0, MAX_SUGGESTIONS);
-  };
-}
 
 function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
@@ -439,12 +400,12 @@ export default async function init(el) {
     ]);
     const searchKey = getMetadata('algolia-search-key');
     const searchProvider = searchKey
-      ? createAlgoliaProvider(
+      ? createAlgoliaSuggestProvider(
           getMetadata('algolia-app-id') || 'Q2XOYHGPQV',
           searchKey,
           getMetadata('algolia-index') || 'witchertavern_recipes_dev',
         )
-      : createQueryIndexProvider(
+      : createQueryIndexSuggestProvider(
           getMetadata('query-index-url') || '/recipes/query-index.json',
         );
     fragment.classList.add('header-content');
