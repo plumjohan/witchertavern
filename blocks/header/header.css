@@ -43,10 +43,10 @@ header {
   .header-content {
     display: grid;
     grid-template-areas:
-      "brand"
-      "nav"
-      "actions";
-    grid-template-rows: var(--header-height) auto 1fr;
+      "brand actions"
+      "nav nav";
+    grid-template-rows: var(--header-height) auto;
+    grid-template-columns: 1fr auto;
   }
 
   .action-wrapper {
@@ -289,6 +289,7 @@ header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding-left: var(--grid-gutter-width);
 
       p,
       a {
@@ -326,23 +327,30 @@ header {
 
   .actions-section {
     grid-area: actions;
-    max-height: 64px;
-    overflow: hidden;
-    transition: all 0.2s ease-in-out;
+    position: relative;
 
     > .default-content {
       display: flex;
       justify-content: end;
       align-items: center;
+      height: var(--header-height);
+      padding-right: var(--grid-gutter-width);
     }
 
     > .block-content {
-      border-bottom: 1px solid var(--color-border);
+      position: fixed;
+      top: var(--header-height);
+      right: 0;
+      display: none;
+      background: var(--color-ink-800);
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-m);
+      z-index: 1002;
     }
 
     .action-wrapper {
       height: var(--header-height);
-      right: -13px;
+      right: 0;
 
       button {
         width: 44px;
@@ -350,8 +358,9 @@ header {
     }
 
     &.is-open {
-      overflow: scroll;
-      max-height: 100%;
+      > .block-content {
+        display: block;
+      }
     }
   }
 
@@ -369,6 +378,7 @@ header {
       > * {
         max-width: var(--grid-container-width);
         margin: 0 auto;
+        padding-inline: var(--grid-gutter-width);
       }
     }
 
@@ -407,6 +417,10 @@ header {
     background-color: var(--color-ink-900);
 
     .brand-section {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .actions-section {
       border-bottom: 1px solid var(--color-border);
     }
   }
@@ -465,6 +479,7 @@ header {
       .default-content {
         max-width: initial;
         margin: 0;
+        padding-left: 0;
       }
 
       .action-wrapper.more {
@@ -488,6 +503,7 @@ header {
         > * {
           max-width: initial;
           margin: initial;
+          padding-inline: 0;
         }
 
         &.is-open {
@@ -541,6 +557,8 @@ header {
       .default-content {
         max-width: initial;
         margin: 0;
+        padding-right: 0;
+        height: auto;
       }
 
       .action-wrapper {
