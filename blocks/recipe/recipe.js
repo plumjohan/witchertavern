@@ -130,6 +130,7 @@ function buildIntro(row, translations) {
       eager: true,
       breakpoints: INTRO_BREAK,
     });
+    picture.querySelector('img')?.setAttribute('fetchpriority', 'high');
     const wrapper = document.createElement('div');
     wrapper.className = 'recipe-image';
     wrapper.append(picture);
