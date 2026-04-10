@@ -4,13 +4,11 @@ export default function init(el) {
   const pic = el.querySelector('picture');
   if (pic) {
     const picPara = pic.closest('p');
-    if (picPara) {
-      const picDiv = document.createElement('div');
-      picDiv.className = 'card-picture-container';
-      picDiv.append(pic);
-      inner.insertAdjacentElement('afterbegin', picDiv);
-      picPara.remove();
-    }
+    const picDiv = document.createElement('div');
+    picDiv.className = 'card-picture-container';
+    picDiv.append(pic);
+    inner.insertAdjacentElement('afterbegin', picDiv);
+    if (picPara && !picPara.hasChildNodes()) picPara.remove();
   }
   // Decorate content
   const con = inner.querySelector(':scope > div:not([class])');
@@ -26,6 +24,18 @@ export default function init(el) {
   if (hashAware) {
     cta.href = `${cta.getAttribute('href')}${window.location.hash}`;
   }
+
+  // Category variant: wrap entire card in the CTA link
+  if (el.classList.contains('category')) {
+    const link = document.createElement('a');
+    link.className = 'card-inner';
+    link.href = cta.getAttribute('href');
+    ctaPara.remove();
+    [...inner.children].forEach((child) => link.append(child));
+    inner.replaceWith(link);
+    return;
+  }
+
   ctaPara.classList.add('card-cta-container');
   inner.append(ctaPara);
 }

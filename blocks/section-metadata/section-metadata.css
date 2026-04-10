@@ -156,11 +156,20 @@
       display: grid;
       grid-template-columns: repeat(var(--grid-size), 1fr);
     }
+
+    &.grid-3 .block-content {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 
 @media (width >= 900px) {
   .section {
+    &.grid-3 .block-content {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
     &.grid-4 .block-content,
     &.grid-6 .block-content {
       display: grid;

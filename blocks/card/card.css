@@ -14,7 +14,7 @@
     height: 100%;
   }
 
-  &:not(.quiet) {
+  &:not(.quiet):not(.category) {
     .card-picture-container {
       position: relative;
       padding-bottom: 60%;
@@ -80,6 +80,93 @@
 
     .card-content-container * {
       margin: 6px;
+    }
+  }
+
+  /* Category tile variant */
+  &.category {
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+
+    &:not(.quiet):hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    a.card-inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+      background: var(--color-background-elevated);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-m);
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+      &:hover {
+        border-color: var(--color-border-accent);
+        box-shadow: var(--shadow-glow-gold);
+
+        .card-picture-container img {
+          transform: scale(1.06);
+        }
+      }
+    }
+
+    .card-picture-container {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background-color: var(--color-ink-700);
+      background-image:
+        radial-gradient(ellipse at 30% 40%, rgb(200 144 40 / 8%) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 70%, rgb(184 32 32 / 6%) 0%, transparent 60%);
+
+      picture {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgb(12 9 5 / 50%) 100%);
+        pointer-events: none;
+      }
+    }
+
+    .card-content-container {
+      padding: var(--spacing-l);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+
+      :first-child {
+        font-family: var(--font-heading);
+        font-size: var(--heading-font-size-s);
+        font-weight: 700;
+        color: var(--color-parchment-300);
+        margin: 0;
+      }
+
+      p {
+        font-size: var(--body-font-size-s);
+        color: var(--color-text-muted);
+        margin: 0;
+      }
     }
   }
 }

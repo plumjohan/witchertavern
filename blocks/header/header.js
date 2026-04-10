@@ -299,7 +299,7 @@ async function decorateSearch(section, searchProvider) {
     clearTimeout(timer);
     closeSuggestions();
     const val = input.value.trim();
-    navigateToSearch('/recipes', val);
+    navigateToSearch('/search', val);
   });
 
   // ── Mobile toggle ──────────────────────────────────────────────────────────
