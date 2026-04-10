@@ -141,6 +141,7 @@ function mapRecord(item) {
     category: item.category ?? '',
     meta,
     universe: item.world ?? '',
+    template: item.template
   };
 }
 
@@ -151,35 +152,8 @@ async function fetchQueryIndex(url) {
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
   const json = await res.json();
   return (json.data ?? [])
-    .filter((item) => !item.template || item.template === 'recipe')
+    .filter((item) => item.template === 'recipe')
     .map(mapRecord);
-}
-
-// ── Category filter bar ───────────────────────────────────────────────────────
-
-function buildFilter(categories, grid) {
-  const bar = document.createElement('div');
-  bar.className = 'recipe-cards-filter';
-
-  ['', ...categories].forEach((cat, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = i === 0 ? 'Всі' : cat;
-    btn.dataset.filter = cat;
-    if (i === 0) btn.classList.add('active');
-
-    btn.addEventListener('click', () => {
-      bar.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      grid.querySelectorAll('.recipe-card').forEach((card) => {
-        // eslint-disable-next-line no-param-reassign
-        card.hidden = cat !== '' && card.dataset.category !== cat;
-      });
-    });
-
-    bar.append(btn);
-  });
-
-  return bar;
 }
 
 // ── Shuffle (Fisher-Yates) ────────────────────────────────────────────────────
@@ -238,6 +212,8 @@ export default async function decorate(block) {
       console.error('[recipe-cards]', err);
     }
 
+    recipes = recipes.filter(recipe => recipe.template === 'recipe');
+
     if (worldFilter) {
       recipes = recipes.filter((r) => universeSlug(r.universe) === worldFilter
         || r.universe.toLowerCase() === worldFilter);
@@ -248,12 +224,7 @@ export default async function decorate(block) {
     if (isRandom) recipes = shuffle(recipes);
     if (limit > 0) recipes = recipes.slice(0, limit);
 
-    const grid = buildGrid(recipes);
-    const categories = [...new Set(recipes.map((r) => r.category).filter(Boolean))];
-    const children = [];
-    if (!worldFilter && !categoryFilter && !limit && categories.length > 1) children.push(buildFilter(categories, grid));
-    children.push(grid);
-    block.replaceChildren(...children);
+    block.replaceChildren(buildGrid(recipes));
     return;
   }
 
@@ -262,11 +233,5 @@ export default async function decorate(block) {
     .map(parseRecipe)
     .filter(Boolean);
   if (!recipes.length) return;
-
-  const grid = buildGrid(recipes);
-  const categories = [...new Set(recipes.map((r) => r.category).filter(Boolean))];
-  const children = [];
-  if (categories.length > 1) children.push(buildFilter(categories, grid));
-  children.push(grid);
-  block.replaceChildren(...children);
+  block.replaceChildren(buildGrid(recipes));
 }
