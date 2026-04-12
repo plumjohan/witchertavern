@@ -39,6 +39,7 @@ import {
   createQueryIndexSearchProvider,
 } from '../../scripts/utils/search.js';
 import getPlaceholders from '../../scripts/utils/placeholders.js';
+import env from '../../scripts/utils/env.js';
 
 // ── Cook time ─────────────────────────────────────────────────────────────────
 
@@ -398,7 +399,7 @@ export default async function decorate(block) {
     provider = createAlgoliaSearchProvider({
       appId: getMetadata('algolia-app-id') || 'Q2XOYHGPQV',
       searchKey: getMetadata('algolia-search-key') ?? '',
-      indexName: getMetadata('algolia-index') || 'witchertavern_recipes_dev',
+      indexName: getMetadata(`algolia-index-${env()}`) || 'witchertavern_recipes_dev',
     });
   }
 
