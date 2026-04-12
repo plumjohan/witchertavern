@@ -27,7 +27,6 @@ const {
 const INDEX_NAME = ALGOLIA_PROD_INDEX_NAME;
 
 const META_FIELDS = [
-  'title',
   'description',
   'category',
   'world',
@@ -59,6 +58,9 @@ async function fetchRecord(path) {
   const html = await res.text();
 
   const record = { path };
+
+  const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+  if (titleMatch) record.title = titleMatch[1];
 
   META_FIELDS.forEach((field) => {
     const value = extractMeta(html, field);
