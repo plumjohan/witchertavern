@@ -24,7 +24,37 @@ const HEADER_ACTIONS = [
 const MIN_QUERY_LEN = 3;
 const DEBOUNCE_MS = 300;
 const SEARCH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`;
+const HAMBURGER_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+const CLOSE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 
+
+function closeMobileNav() {
+  const header = document.querySelector('header');
+  if (!header?.classList.contains('is-mobile-open')) return;
+  header.classList.remove('is-mobile-open');
+  const btn = header.querySelector('.hamburger-btn');
+  if (btn) {
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Open menu');
+    btn.innerHTML = HAMBURGER_ICON;
+  }
+}
+
+function createHamburgerBtn() {
+  const btn = document.createElement('button');
+  btn.className = 'hamburger-btn';
+  btn.setAttribute('aria-label', 'Open menu');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = HAMBURGER_ICON;
+  btn.addEventListener('click', () => {
+    const header = document.querySelector('header');
+    const isOpen = header.classList.toggle('is-mobile-open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+    btn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    btn.innerHTML = isOpen ? CLOSE_ICON : HAMBURGER_ICON;
+  });
+  return btn;
+}
 
 function closeAllMenus() {
   const openMenus = document.body.querySelectorAll('header .is-open');
@@ -311,9 +341,14 @@ async function decorateSearch(btn) {
   });
 }
 
-function decorateMenu() {
-  // TODO: finish single menu support
-  return null;
+function decorateMenu(li) {
+  const subList = li.querySelector(':scope > ul');
+  if (!subList) return null;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu';
+  wrapper.append(subList);
+  li.append(wrapper);
+  return wrapper;
 }
 
 function decorateMegaMenu(li) {
@@ -333,8 +368,12 @@ function decorateNavItem(li) {
   const menu = decorateMegaMenu(li) || decorateMenu(li);
   if (!(menu || link)) return;
   link.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleMenu(li);
+    if (menu) {
+      e.preventDefault();
+      toggleMenu(li);
+    } else {
+      closeMobileNav();
+    }
   });
 }
 
@@ -346,6 +385,7 @@ function decorateBrandSection(section) {
   span.className = 'brand-text';
   span.append(text);
   brandLink.append(span);
+  section.querySelector('.default-content').append(createHamburgerBtn());
 }
 
 function decorateNavSection(section) {

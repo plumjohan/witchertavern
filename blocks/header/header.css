@@ -283,6 +283,30 @@ header {
     }
   }
 
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: var(--color-text-accent);
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
   .brand-section {
     grid-area: brand;
 
@@ -429,6 +453,12 @@ header {
 
     .main-nav-section {
       overflow-y: auto;
+
+      .menu,
+      .mega-menu {
+        display: block;
+        padding-inline-start: var(--spacing-3xl);
+      }
     }
   }
 }
@@ -452,6 +482,30 @@ header {
       position: absolute;
       left: 0;
       right: 0;
+
+      &:not(.mega-menu):not(.language) {
+        left: 0;
+        right: auto;
+        min-width: 180px;
+        border: 1px solid var(--color-border);
+        border-top: none;
+        padding: var(--spacing-s) 0;
+        top: 100%;
+        z-index: 1001;
+
+        li {
+          margin-block: 0;
+        }
+
+        a {
+          display: block;
+          padding: var(--spacing-xs) var(--spacing-m);
+
+          &:hover {
+            background-color: var(--color-ink-700);
+          }
+        }
+      }
 
       &.language {
         display: none;
@@ -480,6 +534,10 @@ header {
       }
     }
 
+    .hamburger-btn {
+      display: none;
+    }
+
     .brand-section {
       border-bottom: initial;
 
@@ -506,6 +564,7 @@ header {
 
       .main-nav-item {
         border-bottom: initial;
+        position: relative;
 
         > * {
           max-width: initial;
@@ -513,9 +572,17 @@ header {
           padding-inline: 0;
         }
 
+        &:hover,
+        &:focus-within,
         &.is-open {
+          .menu,
+          .mega-menu {
+            display: block;
+          }
+
           .main-nav-link {
             border-bottom: initial;
+            color: var(--color-text-accent);
           }
         }
       }
