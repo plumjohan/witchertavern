@@ -4,6 +4,7 @@ logs/
 node_modules/
 .claude/
 .playwright-mcp/
+.drafts
 
 helix-importer-ui
 .DS_Store
