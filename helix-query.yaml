@@ -1,8 +1,13 @@
 indices:
-  all:
+  sitemap:
     include:
       - /**
       - /**/**
+    exclude:
+      - /fragments/**
+      - /fragments/**/**
+      - /docs/**
+      - /docs/**/**
     target: /main/query-index.json
     properties:
       title:
