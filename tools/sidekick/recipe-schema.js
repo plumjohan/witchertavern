@@ -64,11 +64,26 @@ function getDescription() {
   return el?.textContent.trim() || getMeta('description') || getMeta('og:description') || '';
 }
 
+const PROD_HOST = 'https://witchertavern.com';
+
+function toProdUrl(url) {
+  if (!url) return '';
+  try {
+    const u = new URL(url);
+    u.hostname = new URL(PROD_HOST).hostname;
+    u.protocol = 'https:';
+    u.port = '';
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function getImage() {
   const og = getMeta('og:image');
-  if (og) return og;
+  if (og) return toProdUrl(og);
   const img = document.querySelector('.recipe-image img');
-  return img?.src || '';
+  return toProdUrl(img?.src || '');
 }
 
 function getIngredients() {
@@ -249,4 +264,39 @@ export default function initRecipeSchema() {
 
   const json = buildSchema();
   showModal(json);
+}
+
+// ---------------------------------------------------------------------------
+// Auto-inject floating button on recipe pages (non-prod)
+// ---------------------------------------------------------------------------
+const BTN_ID = 'wt-recipe-schema-fab';
+
+if (window.location.pathname.startsWith('/recipes/') && !document.getElementById(BTN_ID)) {
+  const style = document.createElement('style');
+  style.textContent = `
+    #${BTN_ID} {
+      position: fixed;
+      bottom: 72px;
+      right: 16px;
+      z-index: 9000;
+      background: #0e639c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-family: sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    }
+    #${BTN_ID}:hover { background: #1177bb; }
+  `;
+  document.head.append(style);
+
+  const btn = document.createElement('button');
+  btn.id = BTN_ID;
+  btn.textContent = 'Recipe Schema';
+  btn.addEventListener('click', initRecipeSchema);
+  document.body.append(btn);
 }

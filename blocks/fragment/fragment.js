@@ -78,6 +78,9 @@ function getReplaceEl(a) {
 function getRequestPath(a) {
   const { hostname, pathname } = a;
   const href = a.getAttribute('href');
+  if (!href) {
+    return;
+  }
   // If its already relative, return the pathname
   if (href.startsWith('/')) return pathname;
   // If the hostname matches, return the pathname
@@ -96,6 +99,9 @@ function getRequestPath(a) {
 
 export default async function init(a) {
   const path = getRequestPath(a);
+  if (!path) {
+    return
+  }
 
   const fragment = await loadFragment(path);
   if (fragment) {
