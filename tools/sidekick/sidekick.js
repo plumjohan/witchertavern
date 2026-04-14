@@ -1,5 +1,6 @@
 import toggleScheduler from '../scheduler/scheduler.js';
 import initQuickEdit from '../quick-edit/quick-edit.js';
+import initRecipeSchema from './recipe-schema.js';
 
 const ALGOLIA_INDEX_ENDPOINT = 'https://ak-website.vzrivpaket22.workers.dev/algolia-index';
 
@@ -22,6 +23,7 @@ export default async function init(sk) {
   // Handle button clicks
   sk.addEventListener('custom:scheduler', toggleScheduler);
   sk.addEventListener('custom:quick-edit', initQuickEdit);
+  sk.addEventListener('custom:recipe-schema', initRecipeSchema);
 
   // Index published pages in Algolia
   sk.addEventListener('updated', onPublished);
