@@ -1,9 +1,9 @@
 indices:
-  all: &default
+  all:
     include:
       - /**
       - /**/**
-    target: /query-index.json
+    target: /main/query-index.json
     properties:
       title:
         select: head > title
