@@ -1,5 +1,5 @@
 indices:
-  all:
+  all: &default
     include:
       - /**
       - /**/**
@@ -34,7 +34,7 @@ indices:
       template: recipe
     properties:
       title:
-        select: head > title
+        select: main h1:first-of-type
         value: |
           textContent(el)
       description:
