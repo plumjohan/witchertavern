@@ -8,6 +8,7 @@ indices:
       - /fragments/**/**
       - /docs/**
       - /docs/**/**
+      - /search
     target: /main/query-index.json
     properties:
       title:
