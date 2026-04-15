@@ -59,8 +59,7 @@ async function fetchRecord(path) {
 
   const record = { path };
 
-  const titleMatch = html.match(/<h1>([^<]+)<\/h1>/i);
-  console.log("Title Match", titleMatch)
+  const titleMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
   if (titleMatch) record.title = titleMatch[1];
 
   META_FIELDS.forEach((field) => {
