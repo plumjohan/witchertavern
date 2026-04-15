@@ -26,6 +26,11 @@ async function loadSidekick() {
   import('./utils/footer.js').then(({ default: footer }) => footer());
   loadCookieConsent();
 
+  const { codeBase } = getConfig();
+  loadStyle(`${codeBase}/styles/image-expander.css`).then(() => {
+    import('./utils/image-expander.js').then((mod) => mod.default());
+  });
+
   // Author facing tools
   if (ENV !== 'prod') {
     import('../tools/scheduler/scheduler.js');
