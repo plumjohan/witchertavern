@@ -1,4 +1,4 @@
-import ENV from './utils/env.js';
+import { isEdsUrl } from './utils/env.js';
 import { getConfig, loadStyle } from './ak.js';
 
 const CONSENT_KEY = 'cookie-consent';
@@ -32,7 +32,7 @@ async function loadSidekick() {
   });
 
   // Author facing tools
-  if (ENV !== 'prod') {
+  if (isEdsUrl() !== 'prod') {
     import('../tools/scheduler/scheduler.js');
     loadSidekick();
   }
