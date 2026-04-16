@@ -19,7 +19,7 @@ function normalizePath(path) {
 }
 
 function extractTitle(html) {
-  return html.match(/<h1>([^<]+)<\/h1>/i)?.[1] ?? null;
+  return html.match(/<h1[^>]*>([^<]+)<\/h1>/i)?.[1] ?? null;
 }
 
 function extractMeta(html, key) {
