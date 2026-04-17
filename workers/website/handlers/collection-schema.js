@@ -56,6 +56,11 @@ function buildCollectionSchema(pathname, meta, recipes, prodHostname) {
     ...(meta.title && { name: meta.title }),
     ...(meta.description && { description: meta.description }),
     url: `${base}${pathname}`,
+    publisher: {
+      '@type': 'Organization',
+      name: env.ORG_NAME ?? 'Корчма Відьмака',
+      url: `${base}/#organization`,
+    },
     mainEntity: {
       '@type': 'ItemList',
       itemListElement,
