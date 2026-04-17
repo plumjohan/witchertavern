@@ -13,6 +13,7 @@
 import { fetchSchedule, fetchFromAem } from './handlers/aem.js';
 import fetchDaSc from './handlers/dasc.js';
 import handleAlgoliaIndex from './handlers/algolia.js';
+import { parseCollectionUrl, injectCollectionSchema } from './handlers/collection-schema.js';
 
 const ROUTES = [
   // Handle schedule manifests
@@ -123,6 +124,13 @@ export default {
 
     const { handler, cache } = ROUTES.find((route) => route.match(url.pathname));
 
-    return handler({ url, env, request, cache, savedSearch });
+    let resp = await handler({ url, env, request, cache, savedSearch });
+
+    const parsed = parseCollectionUrl(url.pathname);
+    if (parsed && resp.status === 200 && resp.headers.get('content-type')?.includes('text/html')) {
+      resp = await injectCollectionSchema(resp, parsed, url.pathname, env);
+    }
+
+    return resp;
   },
 };
