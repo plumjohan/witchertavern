@@ -481,7 +481,7 @@ export default async function decorate(block) {
 
   const emptyEl = document.createElement('p');
   emptyEl.className = 'rs-empty';
-  emptyEl.textContent = 'No recipes found in the tavern archives…';
+  emptyEl.textContent = 'No recipes found in the inn archives…';
   emptyEl.hidden = true;
 
   let paginationEl = document.createElement('nav');

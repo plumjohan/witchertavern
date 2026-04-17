@@ -123,7 +123,7 @@ function buildSchema() {
     ...(name && { name }),
     ...(description && { description }),
     ...(image && { image: [image] }),
-    author: { '@type': 'Organization', name: 'Witcher Tavern' },
+    author: { '@type': 'Organization', name: 'Witcher Inn' },
     ...(datePublished && { datePublished }),
     ...(cookTime && { cookTime }),
     ...(recipeYield && { recipeYield }),
