@@ -1,4 +1,5 @@
 import { loadArea, setConfig } from './ak.js';
+import loadBreadcrumbs from './utils/breadcrumbs.js';
 
 const hostnames = ['authorkit.dev'];
 
@@ -30,7 +31,7 @@ const decorateArea = ({ area = document }) => {
 
 export async function loadPage() {
   setConfig({ hostnames, locales, linkBlocks, components, decorateArea });
-  await loadArea();
+  await Promise.all([loadArea(), loadBreadcrumbs()]);
 }
 await loadPage();
 

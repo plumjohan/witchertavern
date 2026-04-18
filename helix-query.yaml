@@ -16,6 +16,10 @@ indices:
         select: head > title
         value: |
           textContent(el)
+      header:
+        select: main h1:first-of-type
+        value: |
+          textContent(el)    
       description:
         select: head > meta[name="description"]
         value: |
