@@ -3,3 +3,40 @@
         border-radius: var(--radius-l);
     }
 }
+
+@media (width >= 900px) {
+    .custom-image {
+        &.width-25 {
+            max-width: 25%;
+            margin-inline: auto;
+        }
+
+        &.width-33 {
+            max-width: 33.333%;
+            margin-inline: auto;
+        }
+
+        &.width-50 {
+            max-width: 50%;
+            margin-inline: auto;
+        }
+
+        &.width-66 {
+            max-width: 66.666%;
+            margin-inline: auto;
+        }
+
+        &.width-75 {
+            max-width: 75%;
+            margin-inline: auto;
+        }
+
+        &.align-left {
+            margin-inline: 0 auto;
+        }
+
+        &.align-right {
+            margin-inline: auto 0;
+        }
+    }
+}

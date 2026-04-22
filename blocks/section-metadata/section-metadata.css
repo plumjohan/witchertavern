@@ -138,6 +138,23 @@
     width: 100%;
   }
 
+  /* Section backgrounds */
+  &.bg-elevated {
+    background-color: var(--color-ink-800);
+  }
+
+  &.bg-overlay {
+    background-color: var(--color-ink-700);
+  }
+
+  &.bg-shaded {
+    background-color: var(--color-ash-900);
+  }
+
+  &.bg-surface {
+    background-color: var(--color-parchment-900);
+  }
+
   /* Pre-defined layouts */
   &.layout-bento {
     .block-content {
