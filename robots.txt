@@ -1,7 +1,7 @@
 # Robots.txt - Friendly to LLM and SEO crawlers
-# Last updated: 2025-07-23
+# Last updated: 2026-04-24
 
 User-agent: *
 Allow: /
 
-Sitemap: https://docs.da.live/sitemap.xml
+Sitemap: https://witcherinn.com/sitemap.xml
