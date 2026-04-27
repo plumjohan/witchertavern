@@ -14,9 +14,11 @@
  *   - instructions → .recipe-steps-list .step-content items
  *   - keywords     → meta[name="keywords"]
  *   - datePublished→ meta[name="publication-date"]
+ *   - video.uploadDate → YouTube Data API v3 (key stored in localStorage)
  */
 
 const DIALOG_ID = 'wt-recipe-schema-dialog';
+const YT_API_KEY_STORAGE = 'wt-yt-api-key';
 
 // ---------------------------------------------------------------------------
 // Cook-time parser: "45 хвилин" / "1 годину 30 хвилин" / "45 minutes" → ISO
@@ -45,6 +47,43 @@ function parseCookTime(raw) {
   });
   if (!hours && !minutes) return undefined;
   return `PT${hours ? `${hours}H` : ''}${minutes ? `${minutes}M` : ''}`;
+}
+
+// ---------------------------------------------------------------------------
+// YouTube API key — stored in localStorage, prompted once if absent
+// ---------------------------------------------------------------------------
+function getYouTubeApiKey() {
+  let key = localStorage.getItem(YT_API_KEY_STORAGE);
+  if (!key) {
+    // eslint-disable-next-line no-alert
+    key = prompt(
+      'Enter your YouTube Data API v3 key (stored locally in your browser, never sent to the repo):',
+    );
+    if (key?.trim()) {
+      localStorage.setItem(YT_API_KEY_STORAGE, key.trim());
+    }
+  }
+  return key?.trim() || null;
+}
+
+async function fetchYouTubeUploadDate(videoId) {
+  const apiKey = getYouTubeApiKey();
+  if (!apiKey) return null;
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      if (res.status === 400 || res.status === 403) {
+        // Bad or quota-exceeded key — clear it so user can re-enter next time
+        localStorage.removeItem(YT_API_KEY_STORAGE);
+      }
+      return null;
+    }
+    const data = await res.json();
+    return data.items?.[0]?.snippet?.publishedAt ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -86,15 +125,17 @@ function getImage() {
   return toProdUrl(img?.src || '');
 }
 
-function getVideo() {
+function getVideoId() {
   const iframe = document.querySelector('.video iframe.youtube');
   const src = iframe?.src
     || iframe?.getAttribute('src')
     || document.querySelector('.video[data-src]')?.dataset.src
     || '';
   const match = src.match(/embed\/([\w-]+)/);
-  if (!match) return undefined;
-  const videoId = match[1];
+  return match ? match[1] : null;
+}
+
+function buildVideoObject(videoId, uploadDate) {
   return {
     '@type': 'VideoObject',
     name: getRecipeName(),
@@ -102,6 +143,7 @@ function getVideo() {
     thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
     embedUrl: `https://www.youtube.com/embed/${videoId}`,
     url: `https://www.youtube.com/watch?v=${videoId}`,
+    ...(uploadDate && { uploadDate }),
   };
 }
 
@@ -122,9 +164,9 @@ function getInstructions() {
 }
 
 // ---------------------------------------------------------------------------
-// Schema builder
+// Schema builder (async — needs YouTube API call)
 // ---------------------------------------------------------------------------
-function buildSchema() {
+async function buildSchema() {
   const name = getRecipeName();
   const description = getDescription();
   const image = getImage();
@@ -135,7 +177,13 @@ function buildSchema() {
   const datePublished = getMeta('publication-date');
   const ingredients = getIngredients();
   const instructions = getInstructions();
-  const video = getVideo();
+
+  const videoId = getVideoId();
+  let video;
+  if (videoId) {
+    const uploadDate = (await fetchYouTubeUploadDate(videoId)) ?? getMeta('publication-date') ?? undefined;
+    video = buildVideoObject(videoId, uploadDate);
+  }
 
   const schema = {
     '@context': 'https://schema.org',
@@ -143,7 +191,7 @@ function buildSchema() {
     ...(name && { name }),
     ...(description && { description }),
     ...(image && { image: [image] }),
-    author: { '@id': 'https://witcherinn.com/#organization' },
+    author: { 'type': 'Organization', '@id': 'https://witcherinn.com/#organization' },
     ...(datePublished && { datePublished }),
     ...(cookTime && { cookTime }),
     ...(recipeYield && { recipeYield }),
@@ -275,7 +323,7 @@ function showModal(json) {
 // ---------------------------------------------------------------------------
 // Plugin entry point
 // ---------------------------------------------------------------------------
-export default function initRecipeSchema() {
+export default async function initRecipeSchema() {
   // Only activate on recipe pages
   if (!document.querySelector('.recipe, .recipe-ingredients, .recipe-steps')) {
     // eslint-disable-next-line no-alert
@@ -283,7 +331,6 @@ export default function initRecipeSchema() {
     return;
   }
 
-  const json = buildSchema();
-  console.log(json)
+  const json = await buildSchema();
   showModal(json);
 }
