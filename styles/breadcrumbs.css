@@ -1,12 +1,6 @@
 .breadcrumb {
-  display: none;
-}
-
-@media (width >= 600px) {
-  .breadcrumb {
-    display: block;
-    background: var(--color-ink-700);
-  }
+  display: block;
+  background: var(--color-ink-700);
 }
 
 .breadcrumb ol {
@@ -16,13 +10,14 @@
   max-width: var(--grid-container-width);
   margin: 0 auto;
   padding: var(--spacing-xs) 0;
-  gap: 0.25rem;
+  column-gap: 0.25rem;
+  row-gap: 0;
   font-size: 0.875rem;
 }
 
-.breadcrumb li + li::before {
+.breadcrumb li:not(:last-child)::after {
   content: '›';
-  padding-right: 0.25rem;
+  padding-left: 0.25rem;
   color: var(--color-gray-400, #9ca3af);
 }
 
@@ -37,5 +32,11 @@
 }
 
 .breadcrumb [aria-current='page'] {
-  color: var(--color-gray-500, #6b7280);
+  color: var(--color-gray-200, #e5e7eb);
+}
+
+@media (width < 900px) {
+  .breadcrumb li {
+    margin-block: 2px;
+  }
 }

@@ -50,17 +50,11 @@ function buildDom(crumbs) {
 
   for (const { path, name, isLast } of crumbs) {
     const li = document.createElement('li');
-    if (isLast) {
-      const span = document.createElement('span');
-      span.setAttribute('aria-current', 'page');
-      span.textContent = name;
-      li.append(span);
-    } else {
-      const a = document.createElement('a');
-      a.href = path;
-      a.textContent = name;
-      li.append(a);
-    }
+    const a = document.createElement('a');
+    a.href = path;
+    a.textContent = name;
+    if (isLast) a.setAttribute('aria-current', 'page');
+    li.append(a);
     ol.append(li);
   }
 
@@ -90,10 +84,19 @@ export default async function loadBreadcrumbs() {
   const homeName = await i18n('crumb-home-page-name', 'Корчма Відьмака');
   const crumbs = [{ path: homePath, name: homeName, isLast: false }];
 
+  const showCurrentPage = getMetadata('breadcrumb-current-page') !== 'disabled';
+
   let accPath = prefix;
   for (const [i, seg] of segments.entries()) {
     accPath += `/${seg}`;
-    if (i === segments.length - 1) break;
+    const isLast = i === segments.length - 1;
+    if (isLast) {
+      if (showCurrentPage) {
+        const name = index.get(accPath) || formatSlug(seg);
+        crumbs.push({ path: accPath, name, isLast: true });
+      }
+      break;
+    }
     const name = index.get(accPath) || formatSlug(seg);
     crumbs.push({ path: accPath, name, isLast: false });
   }
