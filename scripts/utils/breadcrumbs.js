@@ -78,7 +78,7 @@ export default async function loadBreadcrumbs() {
   const clean = pathname.replace(prefix, '').replace(/^\/|\/$/g, '');
   const segments = clean ? clean.split('/') : [];
 
-  if (segments.length < 2) return;
+  if (segments.length < 1) return;
 
   const homePath = prefix || '/';
   const homeName = await i18n('crumb-home-page-name', 'Корчма Відьмака');
@@ -92,7 +92,9 @@ export default async function loadBreadcrumbs() {
     const isLast = i === segments.length - 1;
     if (isLast) {
       if (showCurrentPage) {
-        const name = index.get(accPath) || formatSlug(seg);
+        const name = index.get(accPath)
+          || document.querySelector('main h1')?.textContent?.trim()
+          || formatSlug(seg);
         crumbs.push({ path: accPath, name, isLast: true });
       }
       break;
