@@ -92,6 +92,11 @@ async function handleLayout(text, section, type) {
   section.classList.add(`${type}-${text}`);
 }
 
+async function handleDataAttribute(name, section, value) {
+  if (!name) return;
+  section.dataset[name] = value || '';
+}
+
 const getMetadata = (el) => [...el.childNodes].reduce((rdx, row) => {
   if (row.children) {
     const key = row.children[0].textContent.trim().toLowerCase();
@@ -116,5 +121,6 @@ export default async function init(el) {
   if (metadata['background-color']?.content) handleBackground(metadata['background-color'].content, section);
   if (metadata['background-image']?.content) handleBackground(metadata['background-image'].content, section);
   if (metadata.background?.content) handleBackground(metadata.background, section);
+  if (metadata['step-images']?.text) section.dataset.stepImages = metadata['step-images'].text;
   el.remove();
 }

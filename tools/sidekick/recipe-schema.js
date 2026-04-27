@@ -45,6 +45,15 @@ function parseCookTime(raw) {
       minutes += val;
     }
   });
+  if (!hours && !minutes) {
+    const plain = parseFloat(raw.trim().replace(',', '.'));
+    if (!Number.isNaN(plain) && plain > 0) minutes = plain;
+  }
+  if (minutes) {
+    const onlyMinutes = minutes % 60;
+    hours = (minutes - onlyMinutes) / 60;
+    minutes = onlyMinutes;
+  }
   if (!hours && !minutes) return undefined;
   return `PT${hours ? `${hours}H` : ''}${minutes ? `${minutes}M` : ''}`;
 }
@@ -112,6 +121,7 @@ function toProdUrl(url) {
     u.hostname = new URL(PROD_HOST).hostname;
     u.protocol = 'https:';
     u.port = '';
+    u.search = '';
     return u.toString();
   } catch {
     return url;
@@ -147,19 +157,53 @@ function buildVideoObject(videoId, uploadDate) {
   };
 }
 
+function getRecipeCategory() {
+  const links = [...document.querySelectorAll('.breadcrumb ol li a')];
+  return links[links.length - 1]?.textContent.trim() || '';
+}
+
 function getIngredients() {
   return [...document.querySelectorAll('.ingredient-text')]
     .map((el) => el.textContent.trim())
     .filter(Boolean);
 }
 
+function getStepImagesMap() {
+  const map = {};
+  document.querySelectorAll('.section[data-step-images]').forEach((section) => {
+    const stepNum = parseInt(section.dataset.stepImages, 10);
+    if (!stepNum) return;
+    const urls = [...section.querySelectorAll('img')]
+      .map((img) => toProdUrl(img.src || img.getAttribute('src') || ''))
+      .filter(Boolean);
+    if (urls.length) map[stepNum] = urls;
+  });
+  return map;
+}
+
 function getInstructions() {
+  const externalImages = getStepImagesMap();
   return [...document.querySelectorAll('.recipe-steps-list .step-content')]
-    .map((el, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      text: el.textContent.trim(),
-    }))
+    .map((el) => {
+      const step = el.closest('.recipe-step');
+      const stepNum = step ? parseInt(step.id.replace('step-', ''), 10) : null;
+
+      const inlineImgs = step
+        ? [...step.querySelectorAll('.step-image img')]
+          .map((img) => toProdUrl(img.src || img.getAttribute('src') || ''))
+          .filter(Boolean)
+        : [];
+
+      const images = inlineImgs.length ? inlineImgs : (externalImages[stepNum] ?? []);
+
+      return {
+        '@type': 'HowToStep',
+        position: stepNum,
+        text: (() => { const c = el.cloneNode(true); c.querySelector('.step-number')?.remove(); return c.textContent.trim(); })(),
+        url: stepNum ? toProdUrl(`${window.location.href.split('#')[0]}#step-${stepNum}`) : undefined,
+        ...(images.length && { image: images }),
+      };
+    })
     .filter((s) => s.text);
 }
 
@@ -175,6 +219,7 @@ async function buildSchema() {
   const recipeYield = getMeta('servings');
   const keywords = getMeta('keywords');
   const datePublished = getMeta('publication-date');
+  const recipeCategory = getRecipeCategory();
   const ingredients = getIngredients();
   const instructions = getInstructions();
 
@@ -195,6 +240,8 @@ async function buildSchema() {
     ...(datePublished && { datePublished }),
     ...(cookTime && { cookTime }),
     ...(recipeYield && { recipeYield }),
+    recipeCuisine: 'Medieval',
+    ...(recipeCategory && { recipeCategory }),
     ...(keywords && { keywords }),
     ...(ingredients.length && { recipeIngredient: ingredients }),
     ...(instructions.length && { recipeInstructions: instructions }),
