@@ -20,7 +20,6 @@ const {
   PAGE_PATH,
   EVENT_TYPE,
   AEM_ORIGIN,
-  PROD_ORIGIN,
   ALGOLIA_PROD_INDEX_NAME
 } = process.env;
 
@@ -59,6 +58,9 @@ async function fetchRecord(path) {
   const html = await res.text();
 
   const record = { path };
+
+  const lastModified = res.headers.get('last-modified');
+  if (lastModified) record.lastModified = Math.floor(new Date(lastModified).getTime() / 1000);
 
   const titleMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
   if (titleMatch) record.title = titleMatch[1];
