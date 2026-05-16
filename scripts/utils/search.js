@@ -143,7 +143,7 @@ export function createAlgoliaSearchProvider({ appId, searchKey, indexName }) {
     const body = {
       query,
       facetFilters,
-      attributesToRetrieve: ['path', 'title', 'description', 'category', 'image', 'difficulty', 'cook-time', 'servings', 'world'],
+      attributesToRetrieve: ['path', 'title', 'description', 'category', 'image', 'difficulty', 'cook-time', 'servings', 'world', 'lastModified'],
       hitsPerPage: 500,
     };
     if (fetchFacets) body.facets = ['category', 'difficulty', 'world'];
@@ -253,6 +253,7 @@ export function createQueryIndexSearchProvider(url) {
           'cook-time': row['cook-time'] ?? row.cookTime,
           servings: row.servings,
           world: row.world,
+          lastModified: row.lastModified ? Number(row.lastModified) : undefined,
         }));
       return { hits: allHits, facetValues: deriveValues(allHits) };
     },

@@ -51,6 +51,30 @@ const COOK_BUCKETS = [
   { label: 'Over 60 min', value: 'over-60', phKey: 'over-60', test: (m) => m > 60 },
 ];
 
+// ── Sort options ──────────────────────────────────────────────────────────────
+
+const SORT_OPTIONS = [
+  { value: 'newest', phKey: 'recipe-search.sort-newest', label: 'Спочатку нові' },
+  { value: 'oldest', phKey: 'recipe-search.sort-oldest', label: 'Спочатку старі' },
+  { value: 'az', phKey: 'recipe-search.sort-az', label: 'За алфавітом а-я' },
+  { value: 'za', phKey: 'recipe-search.sort-za', label: 'За алфавітом я-а' },
+];
+
+function sortHits(hits, sortKey) {
+  const arr = [...hits];
+  switch (sortKey) {
+    case 'oldest':
+      return arr.sort((a, b) => (a.lastModified ?? 0) - (b.lastModified ?? 0));
+    case 'az':
+      return arr.sort((a, b) => (a.title ?? '').localeCompare(b.title ?? '', undefined, { sensitivity: 'base' }));
+    case 'za':
+      return arr.sort((a, b) => (b.title ?? '').localeCompare(a.title ?? '', undefined, { sensitivity: 'base' }));
+    case 'newest':
+    default:
+      return arr.sort((a, b) => (b.lastModified ?? 0) - (a.lastModified ?? 0));
+  }
+}
+
 // ── Placeholder helper ────────────────────────────────────────────────────────
 
 function ph(placeholders, key, fallback) {
@@ -89,10 +113,11 @@ function readUrlState() {
     difficulty: new Set(p.getAll('difficulty')),
     world: new Set(p.getAll('world')),
     cookTime: new Set(p.getAll('cook')),
+    sort: p.get('sort') || 'newest',
   };
 }
 
-function buildUrl(query, page, filterState) {
+function buildUrl(query, page, filterState, sort) {
   const p = new URLSearchParams();
   if (query) p.set('q', query);
   if (page > 0) p.set('page', page + 1);
@@ -100,6 +125,7 @@ function buildUrl(query, page, filterState) {
   filterState.difficulty.forEach((v) => p.append('difficulty', v));
   filterState.world.forEach((v) => p.append('world', v));
   filterState.cookTime.forEach((v) => p.append('cook', v));
+  if (sort && sort !== 'newest') p.set('sort', sort);
   const qs = p.toString();
   return qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
 }
@@ -407,6 +433,7 @@ export default async function decorate(block) {
   const urlState = readUrlState();
   let currentQuery = urlState.query;
   let currentPage = urlState.page;
+  let currentSort = urlState.sort;
   const filterState = {
     category: urlState.category,
     difficulty: urlState.difficulty,
@@ -482,37 +509,110 @@ export default async function decorate(block) {
   const countEl = document.createElement('p');
   countEl.className = 'rs-count';
 
+  // ── Sort dropdown (custom) ─────────────────────────────────
+  const sortWrapper = document.createElement('div');
+  sortWrapper.className = 'rs-sort-wrapper';
+
+  const sortBtn = document.createElement('button');
+  sortBtn.type = 'button';
+  sortBtn.className = 'rs-sort-btn';
+  sortBtn.setAttribute('aria-haspopup', 'listbox');
+  sortBtn.setAttribute('aria-expanded', 'false');
+
+  const sortList = document.createElement('ul');
+  sortList.className = 'rs-sort-list';
+  sortList.setAttribute('role', 'listbox');
+  sortList.hidden = true;
+
+  function setSortValue(value) {
+    const opt = SORT_OPTIONS.find((o) => o.value === value);
+    sortBtn.textContent = opt ? ph(placeholders, opt.phKey, opt.label) : value;
+    sortList.querySelectorAll('[aria-selected="true"]').forEach((el) => el.removeAttribute('aria-selected'));
+    const active = sortList.querySelector(`[data-value="${value}"]`);
+    if (active) active.setAttribute('aria-selected', 'true');
+  }
+
+  SORT_OPTIONS.forEach(({ value, phKey, label }) => {
+    const li = document.createElement('li');
+    li.className = 'rs-sort-option';
+    li.setAttribute('role', 'option');
+    li.dataset.value = value;
+    li.textContent = ph(placeholders, phKey, label);
+    li.addEventListener('click', () => {
+      currentSort = value;
+      currentPage = 0;
+      setSortValue(value);
+      sortList.hidden = true;
+      sortBtn.setAttribute('aria-expanded', 'false');
+      doRefresh({ push: true });
+    });
+    sortList.append(li);
+  });
+
+  setSortValue(currentSort);
+
+  sortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const willOpen = sortList.hidden;
+    sortList.hidden = !willOpen;
+    sortBtn.setAttribute('aria-expanded', String(willOpen));
+  });
+
+  document.addEventListener('click', () => {
+    if (!sortList.hidden) {
+      sortList.hidden = true;
+      sortBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !sortList.hidden) {
+      sortList.hidden = true;
+      sortBtn.setAttribute('aria-expanded', 'false');
+      sortBtn.focus();
+    }
+  });
+
+  sortWrapper.append(sortBtn, sortList);
+
+  const sortLabel = document.createElement('div');
+  sortLabel.className = 'rs-sort-label';
+  const sortLabelText = document.createElement('span');
+  sortLabelText.textContent = ph(placeholders, 'recipe-search.sort-label', 'Сортування:');
+  sortLabel.append(sortLabelText, sortWrapper);
+
   const grid = document.createElement('div');
   grid.className = 'rs-grid';
 
   const emptyEl = document.createElement('p');
   emptyEl.className = 'rs-empty';
-  emptyEl.textContent = 'No recipes found in the inn archives…';
+  emptyEl.textContent = ph(placeholders, 'recipe-search.no-results-found', 'У корчмі таких рецептів не знайдено');
   emptyEl.hidden = true;
 
   let paginationEl = document.createElement('nav');
   paginationEl.className = 'rs-pagination';
   paginationEl.hidden = true;
 
-  resultsWrap.append(countEl, grid, emptyEl, paginationEl);
+  resultsWrap.append(grid, emptyEl, paginationEl);
 
   // ── Render helper ──────────────────────────────────────────
   function renderResults(hits, { push = false, skipHistory = false } = {}) {
     const filtered = applyCookFilter(hits, filterState.cookTime);
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+    const sorted = sortHits(filtered, currentSort);
+    const totalPages = Math.ceil(sorted.length / PAGE_SIZE) || 1;
     if (currentPage >= totalPages) currentPage = Math.max(0, totalPages - 1);
-    const pageHits = filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+    const pageHits = sorted.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
 
     // Update URL after currentPage is clamped
     if (!skipHistory) {
-      const url = buildUrl(currentQuery, currentPage, filterState);
+      const url = buildUrl(currentQuery, currentPage, filterState, currentSort);
       if (push) history.pushState(null, '', url);
       else history.replaceState(null, '', url);
     }
 
     grid.replaceChildren(...pageHits.map((hit) => buildCard(hit, placeholders)));
-    emptyEl.hidden = filtered.length > 0;
-    countEl.textContent = placeholders['recipe-search.recipes-found-label'] + filtered.length;
+    emptyEl.hidden = sorted.length > 0;
+    countEl.textContent = placeholders['recipe-search.recipes-found-label'] + sorted.length;
 
     const newPagination = buildPagination(currentPage, totalPages, (page) => {
       currentPage = page;
@@ -533,7 +633,7 @@ export default async function decorate(block) {
     filterToggle.textContent = n > 0 ? `${filtersLabel} (${n})` : filtersLabel;
     filterToggle.classList.toggle('rs-filter-toggle--active', n > 0);
     
-    applyBtn.textContent = `${ph(placeholders, 'recipe-search.show-results', 'Show results: ')}${filtered.length}`
+    applyBtn.textContent = `${ph(placeholders, 'recipe-search.show-results', 'Show results: ')}${sorted.length}`
   }
 
   // ── Refresh — queries provider then re-renders ─────────────
@@ -552,10 +652,12 @@ export default async function decorate(block) {
     const state = readUrlState();
     currentQuery = state.query;
     currentPage = state.page;
+    currentSort = state.sort;
     filterState.category = state.category;
     filterState.difficulty = state.difficulty;
     filterState.world = state.world;
     filterState.cookTime = state.cookTime;
+    setSortValue(currentSort);
     syncCheckboxes(sidebar, filterState);
     await doRefresh({ skipHistory: true });
   });
@@ -579,9 +681,13 @@ export default async function decorate(block) {
   }
 
   // ── Layout assembly ────────────────────────────────────────
+  const controls = document.createElement('div');
+  controls.className = 'rs-controls';
+  controls.append(filterToggle, countEl, sortLabel);
+
   const body = document.createElement('div');
   body.className = 'rs-body';
   body.append(sidebar, resultsWrap);
 
-  block.append(activeTagsEl, filterToggle, body, overlay);
+  block.append(activeTagsEl, controls, body, overlay);
 }
